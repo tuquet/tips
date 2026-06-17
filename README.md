@@ -16,7 +16,12 @@ Chỉ đọc những hồ sơ dưới đây khi bạn thực sự muốn bứt p
 Đừng hy vọng AI tự nhiên mà thông minh. Hồ sơ này chứa đựng những tuyệt chiêu để mớm ngữ cảnh (Global Rules, Skills Trigger, tối giản Workspace) ngay từ tầng nền tảng. Ép AI phải suy nghĩ và hành động chuẩn xác theo luật lệ của project trước cả khi nó kịp sinh ra dòng code đầu tiên.
 
 ### ["Vũ Khí Hạng Nặng" - Khai Thác MCP Servers](./mcp-servers.md)
-Bạn tốn 3 ngày để dựng Database và bóc tách thiết kế UI/UX? Tài liệu này sẽ giải mã sức mạnh của các MCP Server (Figma, Supabase, Memplace) — những món đồ nghề "cơm gạo" giúp bạn rút ngắn thời gian làm việc xuống còn vài giờ. Sự tự động hóa ở tầng sâu nhất mà các senior ít khi chia sẻ công khai.
+Bạn tốn 3 ngày để dựng Database và bóc tách thiết kế UI/UX? Tài liệu này sẽ giải mã sức mạnh của các MCP Server (Figma, Supabase, MemPalace) — những món đồ nghề "cơm gạo" giúp bạn rút ngắn thời gian làm việc xuống còn vài giờ. Sự tự động hóa ở tầng sâu nhất mà các senior ít khi chia sẻ công khai.
+
+---
+
+### [Cài "Bộ Não Thứ Hai" - Setup MemPalace Cho Dự Án](./setup/mempalace-setup.md)
+Không có memory dài hạn, AI mãi mãi chỉ là thằng "hay quên". Hướng dẫn chi tiết cài MemPalace, init palace cho từng dự án, cấu hình MCP cho opencode, cài Antigravity plugin, và setup hooks auto-save. Từ zero tới có "bộ não" cho mọi dự án trong repository.
 
 ---
 
