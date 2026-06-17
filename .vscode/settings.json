@@ -3,8 +3,8 @@
   "editor.tabSize": 2,
   "editor.detectIndentation": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true,
-    "source.fixAll": true
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
   },
   "files.exclude": {
     "**/.git": true,

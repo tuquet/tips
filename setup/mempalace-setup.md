@@ -49,22 +49,27 @@ mempalace init . --auto-mine .
 
 Hoặc chỉ định đường dẫn:
 ```bash
-mempalace init C:\Repository\crm-be
+mempalace init /path/to/my-project
 ```
 
-**Các project trong repository này:**
-
-| Dự án | Status | Drawers |
-|-------|--------|---------|
-| `crm-batch` | ✅ | 251 |
-| `crm-be` | ✅ | 1322 |
-| `crm-fe` | ✅ | 404 |
-| `ECQS` | ✅ | 1181 |
-| `ECQS-FE` | ✅ | 141 |
-
-Kiểm tra toàn bộ:
+Kiểm tra toàn bộ palace:
 ```bash
 mempalace status
+```
+
+Output mẫu:
+```
+=======================================================
+  MemPalace Status — N drawers
+=======================================================
+
+  WING: my_project
+    ROOM: general                N drawers
+
+  WING: another_project
+    ROOM: general                N drawers
+
+=======================================================
 ```
 
 ---
