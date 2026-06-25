@@ -10,7 +10,7 @@ Chính vì vậy, là một người lười biếng một cách có tính toán
 
 Dưới đây là câu chuyện thực tế về cách các mảnh ghép này phối hợp nhịp nhàng với nhau trong một ngày làm việc của tôi để biến mọi thứ trở nên tự động và nhàn nhã.
 
-## 📊 Ma Trận Lựa Chọn Công Cụ
+## 📊 Ma Trận Lựa Chunk Công Cụ
 
 Để xây dựng hệ thống này, các công cụ được tôi chọn lọc rất kỹ lưỡng dựa trên khả năng giao tiếp của chúng (hỗ trợ **MCP** để AI Agent gọi trực tiếp, tích hợp **CLI** để chạy dòng lệnh, hoặc khả năng **Scheduler** chạy tự động theo lịch). Dưới đây là bảng tổng hợp nhanh:
 
@@ -51,7 +51,7 @@ graph TD
         E -->|Bruno CLI| I[API Integration Testing]
         E -->|Automa Chrome Extension| J[E2E UI/UX Testing]
         J -->|Lưu JSON & Upload ảnh Test Report| K[(Supabase Cloud Database & Storage)]
-        K -->|Webhook báo Bug| L((Telegram Chatbot))
+        K -->|Webhook báo Bug| L((Chatbot))
         L -->|Ra lệnh sửa Bug| A
     end
 ```
@@ -64,7 +64,7 @@ graph TD
 
 Bước vào bàn làm việc, tôi không mở VSCode ngay. Tôi mở **Obsidian** trước. 
 
-Nhờ tính năng tự động đồng bộ qua OneDrive, toàn bộ các bản thiết kế, cấu trúc database và danh sách task của dự án từ hôm trước đã được cập nhật đầy đủ. Tôi mở **Obsidian Canvas** - nơi tôi vẽ sơ đồ tư duy của hệ thống. Nhìn vào các node kết nối trực quan, tôi biết chính xác module User Authorization đang bị nghẽn ở đâu.
+Nhờ tính năng tự động đồng bộ qua OneDrive, toàn bộ các bản thiết kế, cấu trúc database và danh sách task của dự án từ hôm trước đã được cập nhật đầy đủ. Tôi mở **Obsidian Canvas** - nơi tôi vẽ sơ đồ tư duy của hệ thống. Nhìn vào các node kết nối trực quan, tôi biết chính xác luồng xử lý của module thanh toán (Billing Module) đang bị nghẽn ở đâu.
 
 ![Obsidian Canvas Workflow](./images/obsidian_canvas_workflow.png)
 *(Ảnh minh họa) Giao diện Obsidian Canvas giúp tôi trực quan hóa luồng dữ liệu (Data flow) và bối cảnh dự án.*
@@ -85,7 +85,7 @@ Thay vì để AI đoán mò cách chạy dự án, tôi chuẩn bị sẵn file
 *   **tasks.json:** Tôi định nghĩa sẵn các task chạy Maven, Docker hay npm script kèm theo chú thích chi tiết ở trường `"detail"`. Khi tôi bảo chạy dự án, AI tự động chui vào file cấu hình đọc và lấy đúng lệnh ra chạy.
 *   **Mermaid Diagrams:** Tôi khuyên anh em nên cài extension Mermaid trong IDE. AI viết sơ đồ bằng chữ (Markdown) rất giỏi. Khi cần phân tích luồng code cũ rắc rối, tôi bắt AI: *"Hãy vẽ lại luồng này bằng Mermaid"*. Xem biểu đồ trực quan nhanh hơn đọc code chay nhiều lần.
 
-Khi tôi ra lệnh: *"Kiểm tra schema bảng `users` hiện tại dưới DB local rồi viết hộ anh một API để reset mật khẩu nhé."*
+Khi tôi ra lệnh: *"Kiểm tra schema bảng `transactions` hiện tại dưới DB local rồi viết hộ anh một API để xử lý hoàn tiền (refund) nhé."*
 
 Lúc này, phép thuật của **MCP (Model Context Protocol) Server** hoạt động. Thay vì tôi phải đi tìm file SQL hay chụp cấu trúc bảng gửi cho AI, AI Agent tự động gọi công cụ của **Supabase/Postgres MCP Server** để truy vấn trực tiếp vào Database local của tôi. Nó tự đọc bảng, tự hiểu các cột, kiểu dữ liệu và sinh ra đoạn code API chuẩn xác 100% theo đúng coding convention của dự án.
 
@@ -97,31 +97,33 @@ AI thông thường rất hay bị "mất não" (quên bối cảnh) sau khoản
 
 Mỗi khi tôi kết thúc một cuộc hội thoại với AI Agent, một **Stop Hook** (được cấu hình qua script chạy ngầm) tự động kích hoạt. Nó âm thầm bóc tách các quyết định quan trọng, cấu trúc code mới sửa và ném thẳng vào "lâu đài ký ức" MemPalace.
 
-Đến chiều, khi tôi cần làm một task liên quan, **Wake Hook** của AI sẽ tự động query nhanh từ MemPalace: *"À, buổi sáng ông dev này đã sửa cấu trúc bảng users như thế này, quy tắc mã hóa mật khẩu là thế kia..."* và bơm trực tiếp ngữ cảnh đó vào prompt tiếp theo. AI lập tức hiểu vấn đề mà tôi không cần phải tốn công giải thích lại từ đầu.
+Đến chiều, khi tôi cần làm một task liên quan, **Wake Hook** của AI sẽ tự động query nhanh từ MemPalace: *"À, buổi sáng ông dev này đã sửa cấu trúc bảng transactions như thế này, quy tắc mã hóa chữ ký là thế kia..."* và bơm trực tiếp ngữ cảnh đó vào prompt tiếp theo. AI lập tức hiểu vấn đề mà tôi không cần phải tốn công giải thích lại từ đầu.
 
 ---
 
 ### 1:30 PM — Bruno (API Testing) - Tự động hóa kiểm thử luồng API theo Context/Roles
 
-Sau khi code xong API reset mật khẩu, tôi cần test xem nó chạy đúng không. Thay vì mở Postman (vừa nặng vừa đòi đăng nhập cloud phiền phức), tôi dùng **Bruno**. 
+Sau khi code xong API refund, tôi cần test xem nó chạy đúng không. Thay vì mở Postman (vừa nặng vừa đòi đăng nhập cloud phiền phức), tôi dùng **Bruno**. 
 
 Bruno cực kỳ đỉnh ở chỗ nó lưu các request dưới dạng các file markup có cấu trúc tương tự `*.yml` (với định dạng `.bru`). Điều này có nghĩa là tôi có thể vứt thẳng toàn bộ file cấu hình request này vào git repository. 
 
 **Điểm cộng cực lớn ở đây:** Vì Bruno lưu trực tiếp thành các file `*.yml` / `*.bru` và tích hợp Git, nhóm phát triển (Dev) và nhóm kiểm thử (QC/QA) có thể làm việc song song hoàn toàn độc lập mà không lo bị block hay xung đột tài khoản cloud. Mỗi người tự viết kịch bản test cho role/context của mình, push lên git và chia sẻ nhanh chóng. 
 
-Tôi bảo AI Agent: *"Em vào thư mục `api-tests/`, đọc các file `.bru` hiện tại rồi tạo cho anh một file test mới tên là `reset-password.bru` để test API vừa viết nhé."* 
+Tôi bảo AI Agent: *"Em vào thư mục `api-tests/`, đọc các file `.bru` hiện tại rồi tạo cho anh một file test mới tên là `refund-api.bru` để test API vừa viết nhé."* 
 
 AI viết file trong vòng 1 giây. Tôi chỉ cần chạy lệnh `bru run` ngay trên terminal để test tự động toàn bộ luồng API. Nhanh, gọn, nhẹ và hoàn toàn nằm trong tầm kiểm soát của Git.
 
+---
+
 ### 3:00 PM — Automa (E2E Testing) & Supabase (Storage & DB) - Chạy Automation Test và Lưu Trữ Báo Cáo Miễn Phí
 
-API đã chạy ngon, Frontend đã dựng xong, giờ đến phần kiểm thử luồng đăng ký -> đăng nhập -> reset mật khẩu trên trình duyệt. Thường thì chúng ta sẽ phải viết code Cypress hoặc Playwright khá tốn thời gian. Nhưng tôi chọn **Automa** - một Chrome Extension cho phép kéo thả để tạo kịch bản tự động hóa cực kỳ trực quan.
+API đã chạy ngon, Frontend đã dựng xong, giờ đến phần kiểm thử luồng thanh toán -> xuất hóa đơn -> hoàn tiền trên trình duyệt. Thường thì chúng ta sẽ phải viết code Cypress hoặc Playwright khá tốn thời gian. Nhưng tôi chọn **Automa** - một Chrome Extension cho phép kéo thả để tạo kịch bản tự động hóa cực kỳ trực quan.
 
 **Giải pháp độc lập và đồng bộ đám mây:** Vì Automa là một extension độc lập chạy trên trình duyệt, các nhóm test (QC) có thể tự thiết kế và xuất (export) kịch bản workflow dưới dạng các file `*.json`. Nhưng thay vì lưu trữ thủ công rời rạc, tôi tích hợp thêm **Supabase** vào làm máy chủ lưu trữ tập trung. 
 *   Các file cấu hình `*.json` được lưu tập trung vào Supabase Database để AI Agent hoặc bất kỳ ai trong team đều có thể fetch về dùng ngay mà không bị block.
 *   Khi Automa chạy test tự động, nó sẽ chụp ảnh màn hình các bước (Test Report Screenshots). Toàn bộ các ảnh này được tự động tải lên **Supabase Storage** (với gói **Miễn Phí** cực kỳ hào phóng lên tới 1GB lưu trữ). Mọi kết quả kiểm thử được công khai hóa bằng đường link CDN để cả Dev lẫn QC đều kiểm tra được ngay lập tức. 
 
-Tuyệt chiêu ở đây là: Automa cho phép xuất kịch bản test dưới dạng file `*.json`. Tôi chỉ cần đưa file `*.json` mẫu của một luồng test cũ cho AI Agent và bảo: *"Hãy sửa đổi file `*.json` kịch bản Automa này để nó tự động điền form reset mật khẩu mới trên màn hình localhost:3000."*
+Tuyệt chiêu ở đây là: Automa cho phép xuất kịch bản test dưới dạng file `*.json`. Tôi chỉ cần đưa file `*.json` mẫu của một luồng test cũ cho AI Agent và bảo: *"Hãy sửa đổi file `*.json` kịch bản Automa này để nó tự động điền form refund mới trên màn hình localhost:3000."*
 
 AI sinh ra file `*.json` mới, tôi chỉ việc import vào Automa trên Chrome và nhấn Run. Trình duyệt tự động mở ra, click chuột, điền form, chụp màn hình lưu kết quả, đẩy thẳng ảnh lên Supabase Storage và hoàn tất báo cáo kiểm thử trong chớp mắt. Tôi chỉ ngồi uống nước và xem thành quả.
 
