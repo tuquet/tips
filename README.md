@@ -128,9 +128,9 @@ AI sinh ra file `*.json` mới, tôi chỉ việc import vào Automa trên Chrom
 #### 🔔 Khi Bug xuất hiện: Tự động hóa qua Telegram Chatbot
 Hệ thống này còn có một điểm cực kỳ vi diệu: Khi Automa chạy test định kỳ (scheduler) và phát hiện ra lỗi (assert fail hoặc crash giao diện), nó sẽ insert một bản ghi lỗi vào Supabase Database kèm link screenshot từ Storage. 
 
-Ngay lập tức, một **Supabase Webhook** (được trigger từ sự kiện insert bảng lỗi) hoạt động. Nó tự động bắn thông tin chi tiết về Bug kèm ảnh chụp bằng chứng trực tiếp vào nhóm chat **Telegram** của tôi. 
+Ngay lập tức, một **Supabase Webhook** (được trigger từ sự kiện insert bảng lỗi) hoạt động. Nó tự động bắn thông tin chi tiết về Bug kèm ảnh chụp bằng chứng trực tiếp vào nhóm chat **Telegram** của tôi (nếu làm việc trong môi trường doanh nghiệp lớn, bạn hoàn toàn có thể thay thế Telegram bằng các nền tảng chat nhóm như **Microsoft Teams**, **Slack**, hoặc **Discord** thông qua cơ chế incoming/outgoing webhook tương tự). 
 
-Điều thú vị nhất là tôi có thể gõ phản hồi trực tiếp trên Telegram: `/fixbug [mô tả ngắn]`. Chatbot Telegram của tôi (được liên kết bằng API) sẽ dịch chuyển tin nhắn này thành lệnh và gửi trực tiếp về cho **AI Agent** đang chạy local. Agent tự động nhận lệnh, mở đúng file code bị lỗi ra sửa, chạy lại test và báo cáo ngược lại. Toàn bộ chu trình từ phát hiện lỗi đến sửa lỗi diễn ra khép kín và tự động kể cả khi tôi không ngồi trước máy tính.
+Điều thú vị nhất là tôi có thể gõ phản hồi trực tiếp trên ứng dụng chat (ví dụ như gõ `/fixbug [mô tả ngắn]` trên Telegram). Chatbot (được liên kết bằng API) sẽ dịch chuyển tin nhắn này thành lệnh và gửi trực tiếp về cho **AI Agent** đang chạy local. Agent tự động nhận lệnh, mở đúng file code bị lỗi ra sửa, chạy lại test và báo cáo ngược lại. Toàn bộ chu trình từ phát hiện lỗi đến sửa lỗi diễn ra khép kín và tự động kể cả khi tôi không ngồi trước máy tính.
 
 ---
 
