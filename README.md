@@ -1,28 +1,140 @@
-# Hồ Sơ Mật: Bí Kíp Thao Túng AI Assistant Dành Cho Kỹ Sư
+# Một Ngày Trong Đời Của Developer "Lười": Cách Tôi Dựng Siêu Hệ Thống Tự Động Hóa Với AI Agent, MemPalace & Obsidian
 
-*Mọi dòng code bạn viết ra đều có thể được hoàn thành nhanh gấp 10 lần. Nhưng bí quyết thực sự thường không nằm trong các tài liệu Document.*
+*Chia sẻ thực tế từ một lập trình viên thích tối ưu hóa quy trình làm việc.*
 
-Kho lưu trữ này không phải là một bộ tutorial nhạt nhẽo hay lý thuyết suông. Đây là những "góc khuất", những thủ thuật thực chiến được đánh đổi bằng hàng ngàn giờ thức trắng đêm chạy deadline outsourcing. 
+Đi làm lập trình viên, sợ nhất không phải là gặp task khó, mà sợ nhất là những công việc lặp đi lặp lại vô nghĩa: ngồi nhớ xem hôm qua mình đang làm dở file nào, gõ đi gõ lại mấy câu lệnh terminal dài dằng dặc, mở Postman lên click click test API thủ công, hay cặm cụi click chuột giả lập trên trình duyệt để kiểm thử giao diện.
 
-Ở đây, chúng ta không dùng AI như một công cụ chat hỏi đáp thông thường. Chúng ta ép nó vào khuôn khổ, kiểm soát bối cảnh, và biến nó thành một cỗ máy cày task tự động theo đúng ý đồ kiến trúc của mình.
+Là một người lười biếng một cách có tính toán, tôi đã quyết định đầu tư một lần để dựng lên một **hệ sinh thái tự động hóa** xoay quanh quy trình làm việc hàng ngày của mình. Hệ thống này kết hợp các công cụ: **AI Agent**, **[MemPalace](https://github.com/mempalace/mempalace) (Bộ nhớ dài hạn mã nguồn mở - Long-term Memory)**, **[Obsidian](https://obsidian.md/) (Quản lý tri thức dạng Graph local-first - Documentation / Knowledge Base)**, **OneDrive (Đồng bộ đám mây - Cloud Sync)**, **[Bruno](https://github.com/usebruno/bruno) (API Client mã nguồn mở thay thế Postman - API Testing)**, **MCP Server (Giao tiếp hệ thống - Model Context Protocol)** và **Automa (Tự động hóa trình duyệt - E2E Testing)**.
 
-Chỉ đọc những hồ sơ dưới đây khi bạn thực sự muốn bứt phá khỏi cách làm việc truyền thống và tối ưu hóa tối đa hiệu suất.
+Dưới đây là câu chuyện thực tế về cách các mảnh ghép này phối hợp nhịp nhàng với nhau trong một ngày làm việc của tôi để biến mọi thứ trở nên tự động và nhàn nhã.
+
+## 📊 Ma Trận Lựa Chọn Công Cụ
+
+Để xây dựng hệ thống này, các công cụ được tôi chọn lọc rất kỹ lưỡng dựa trên khả năng giao tiếp của chúng (hỗ trợ **MCP** để AI Agent gọi trực tiếp, tích hợp **CLI** để chạy dòng lệnh, hoặc khả năng **Scheduler** chạy tự động theo lịch). Dưới đây là bảng tổng hợp nhanh:
+
+| Công cụ | Open Source | MCP | CLI / API | Scheduler | Lý do lựa chọn cốt lõi |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **[MemPalace](https://github.com/mempalace/mempalace) (Memory)** | ✅ | ✅ | ✅ | ❌ | Cung cấp bộ nhớ dài hạn, cô lập bối cảnh (Context Isolation) theo từng dự án. |
+| **[Obsidian](https://obsidian.md/) (Documentation)** | ❌ (Free) | ❌ | ✅ | ❌ | Quản lý tri thức local-first cực mạnh với Canvas và Graph View (hoặc có thể dùng **[Logseq](https://logseq.com/)** làm giải pháp mã nguồn mở thay thế). |
+| **[Bruno](https://github.com/usebruno/bruno) (API Testing)** | ✅ | ❌ | ✅ | ✅ | Lưu request dạng file văn bản thuần. Hỗ trợ Environment Variables & scripts để test tự động API theo context/roles của user qua scheduler. |
+| **[Automa](https://automa.site/) (E2E Testing)** | ✅ | ❌ | ✅ | ✅ | Tự động hóa trình duyệt qua giao diện trực quan, hỗ trợ export kịch bản JSON và chạy scheduler kiểm thử định kỳ. |
+| **MCP Servers (Integration)** | ✅ | ✅ | ❌ | ❌ | Cánh tay nối dài giúp trợ lý AI tương tác trực tiếp với Database, Figma, File System... |
+
+*(Gợi ý: Nếu bạn muốn một hệ thống tài liệu hoàn toàn mã nguồn mở để thay thế cho Obsidian, [Logseq](https://logseq.com/) là một sự lựa chọn thay thế tuyệt vời với khả năng lưu trữ file markdown local-first và biểu đồ Graph View tương đương).*
 
 ---
 
-## 📂 Danh Mục Phân Loại
+## 🗺️ Sơ Đồ Kiến Trúc Hệ Thống
 
-### [Khởi Động "Bộ Não" - Thiết Lập IDE Context](./ide-ai-context.md)
-Đừng hy vọng AI tự nhiên mà thông minh. Hồ sơ này chứa đựng những tuyệt chiêu để mớm ngữ cảnh (Global Rules, Skills Trigger, tối giản Workspace) ngay từ tầng nền tảng. Ép AI phải suy nghĩ và hành động chuẩn xác theo luật lệ của project trước cả khi nó kịp sinh ra dòng code đầu tiên.
+Để dễ hình dung cách các mảnh ghép này khớp vào nhau, hãy nhìn vào sơ đồ luồng hoạt động dưới đây:
 
-### ["Vũ Khí Hạng Nặng" - Khai Thác MCP Servers](./mcp-servers.md)
-Bạn tốn 3 ngày để dựng Database và bóc tách thiết kế UI/UX? Tài liệu này sẽ giải mã sức mạnh của các MCP Server (Figma, Supabase, MemPalace) — những món đồ nghề "cơm gạo" giúp bạn rút ngắn thời gian làm việc xuống còn vài giờ. Sự tự động hóa ở tầng sâu nhất mà các senior ít khi chia sẻ công khai.
+```mermaid
+graph TD
+    subgraph Local Workspace
+        A[AI Agent] -->|Gọi| B(MCP Servers)
+        B -->|Đọc/Ghi| C[(Database / Local Files)]
+        A -->|Stop/Wake Hooks| D[MemPalace]
+        A -->|Sinh kịch bản test| E[Bruno API / Automa JSON]
+    end
+
+    subgraph Knowledge & Sync
+        F[(Obsidian Vault)] -->|OneDrive Sync| G((Cloud OneDrive))
+        D -->|OneDrive Sync| G
+        A -->|Auto-save Artifacts| F
+        F -->|Canvas & Graph View| H[Developer Visualizing]
+    end
+
+    subgraph Execution & Test
+        E -->|Bruno CLI| I[API Integration Testing]
+        E -->|Automa Chrome Extension| J[E2E UI/UX Testing]
+    end
+```
 
 ---
 
-### [Cài "Bộ Não Thứ Hai" - Setup MemPalace Cho Dự Án](./setup/mempalace-setup.md)
-Không có memory dài hạn, AI mãi mãi chỉ là thằng "hay quên". Hướng dẫn chi tiết cài MemPalace, init palace cho từng dự án, cấu hình MCP cho opencode, cài Antigravity plugin, và setup hooks auto-save. Từ zero tới có "bộ não" cho mọi dự án trong repository.
+## ⏰ Ký Sự Một Ngày Làm Việc Thực Tế
+
+### 8:30 AM — Khởi động ngày mới với Obsidian (Documentation & Visualizing)
+
+Bước vào bàn làm việc, tôi không mở VSCode ngay. Tôi mở **Obsidian** trước. 
+
+Nhờ tính năng tự động đồng bộ qua OneDrive, toàn bộ các bản thiết kế, cấu trúc database và danh sách task của dự án từ hôm trước đã được cập nhật đầy đủ. Tôi mở **Obsidian Canvas** - nơi tôi vẽ sơ đồ tư duy của hệ thống. Nhìn vào các node kết nối trực quan, tôi biết chính xác module User Authorization đang bị nghẽn ở đâu.
+
+![Obsidian Canvas Workflow](./images/obsidian_canvas_workflow.png)
+*(Ảnh minh họa) Giao diện Obsidian Canvas giúp tôi trực quan hóa luồng dữ liệu (Data flow) và bối cảnh dự án.*
+
+Tôi chuyển sang **Graph View** để xem các mối liên kết giữa các file markdown tài liệu và code. Sự liên kết trực quan này giúp não bộ của tôi khởi động cực kỳ nhanh mà không cần mất 15-30 phút ngồi "nhớ lại" xem hôm qua mình đang làm dở cái gì.
+
+![Obsidian Graph View](./images/obsidian_graph_view.png)
+*(Ảnh minh họa) Mạng lưới liên kết tài liệu số (Digital Mind Map) của tôi trên Obsidian Graph View.*
 
 ---
 
-*... Các tài liệu thực chiến mới sẽ liên tục được cập nhật...*
+### 9:15 AM — Coding không cần gõ phím cùng AI Agent & MCP Servers (Local Dev Environment)
+
+Tôi bắt đầu mở IDE để code. Người bạn đồng hành lúc này là một **AI Agent** chạy local cực kỳ mạnh mẽ. Nhưng để trợ lý này thực sự hiểu dự án, tôi đã cấu hình kỹ càng Workspace IDE của mình.
+
+#### 💡 Mẹo mớm context chuẩn qua Workspace IDE
+Thay vì để AI đoán mò cách chạy dự án, tôi chuẩn bị sẵn file `.vscode/tasks.json` và `.cursorrules` (hoặc file cấu hình tương đương).
+*   **tasks.json:** Tôi định nghĩa sẵn các task chạy Maven, Docker hay npm script kèm theo chú thích chi tiết ở trường `"detail"`. Khi tôi bảo chạy dự án, AI tự động chui vào file cấu hình đọc và lấy đúng lệnh ra chạy.
+*   **Mermaid Diagrams:** Tôi khuyên anh em nên cài extension Mermaid trong IDE. AI viết sơ đồ bằng chữ (Markdown) rất giỏi. Khi cần phân tích luồng code cũ rắc rối, tôi bắt AI: *"Hãy vẽ lại luồng này bằng Mermaid"*. Xem biểu đồ trực quan nhanh hơn đọc code chay nhiều lần.
+
+Khi tôi ra lệnh: *"Kiểm tra schema bảng `users` hiện tại dưới DB local rồi viết hộ anh một API để reset mật khẩu nhé."*
+
+Lúc này, phép thuật của **MCP (Model Context Protocol) Server** hoạt động. Thay vì tôi phải đi tìm file SQL hay chụp cấu trúc bảng gửi cho AI, AI Agent tự động gọi công cụ của **Supabase/Postgres MCP Server** để truy vấn trực tiếp vào Database local của tôi. Nó tự đọc bảng, tự hiểu các cột, kiểu dữ liệu và sinh ra đoạn code API chuẩn xác 100% theo đúng coding convention của dự án.
+
+---
+
+### 10:30 AM — Cơ chế tự động "nạp ký ức" của MemPalace (Hooks & Plugins)
+
+AI thông thường rất hay bị "mất não" (quên bối cảnh) sau khoảng 15-20 câu chat. Nhưng với hệ thống của tôi, **MemPalace** đóng vai trò là bộ nhớ dài hạn chạy local-first.
+
+Mỗi khi tôi kết thúc một cuộc hội thoại với AI Agent, một **Stop Hook** (được cấu hình qua script chạy ngầm) tự động kích hoạt. Nó âm thầm bóc tách các quyết định quan trọng, cấu trúc code mới sửa và ném thẳng vào "lâu đài ký ức" MemPalace.
+
+Đến chiều, khi tôi cần làm một task liên quan, **Wake Hook** của AI sẽ tự động query nhanh từ MemPalace: *"À, buổi sáng ông dev này đã sửa cấu trúc bảng users như thế này, quy tắc mã hóa mật khẩu là thế kia..."* và bơm trực tiếp ngữ cảnh đó vào prompt tiếp theo. AI lập tức hiểu vấn đề mà tôi không cần phải tốn công giải thích lại từ đầu.
+
+---
+
+### 1:30 PM — Bruno (API Testing) - Tự động hóa kiểm thử luồng API theo Context/Roles
+
+Sau khi code xong API reset mật khẩu, tôi cần test xem nó chạy đúng không. Thay vì mở Postman (vừa nặng vừa đòi đăng nhập cloud phiền phức), tôi dùng **Bruno**. 
+
+Bruno cực kỳ đỉnh ở chỗ nó lưu các request dưới dạng các file markup có cấu trúc tương tự `*.yml` (với định dạng `.bru`). Điều này có nghĩa là tôi có thể vứt thẳng toàn bộ file cấu hình request này vào git repository. 
+
+**Điểm cộng cực lớn ở đây:** Vì Bruno lưu trực tiếp thành các file `*.yml` / `*.bru` và tích hợp Git, nhóm phát triển (Dev) và nhóm kiểm thử (QC/QA) có thể làm việc song song hoàn toàn độc lập mà không lo bị block hay xung đột tài khoản cloud. Mỗi người tự viết kịch bản test cho role/context của mình, push lên git và chia sẻ nhanh chóng. 
+
+Tôi bảo AI Agent: *"Em vào thư mục `api-tests/`, đọc các file `.bru` hiện tại rồi tạo cho anh một file test mới tên là `reset-password.bru` để test API vừa viết nhé."* 
+
+AI viết file trong vòng 1 giây. Tôi chỉ cần chạy lệnh `bru run` ngay trên terminal để test tự động toàn bộ luồng API. Nhanh, gọn, nhẹ và hoàn toàn nằm trong tầm kiểm soát của Git.
+
+---
+
+### 3:00 PM — Automa (E2E Testing) - Chạy Automation Test UI/UX thần tốc
+
+API đã chạy ngon, Frontend đã dựng xong, giờ đến phần kiểm thử luồng đăng ký -> đăng nhập -> reset mật khẩu trên trình duyệt. Thường thì chúng ta sẽ phải viết code Cypress hoặc Playwright khá tốn thời gian. Nhưng tôi chọn **Automa** - một Chrome Extension cho phép kéo thả để tạo kịch bản tự động hóa cực kỳ trực quan.
+
+**Giải pháp độc lập cho các phòng ban:** Vì Automa là một extension độc lập chạy trên trình duyệt, các nhóm test (QC) có thể tự thiết kế và xuất (export) kịch bản workflow dưới dạng các file `*.json` rồi chia sẻ lên host chung của dự án. Dev có thể lấy ngay file `*.json` này về import và chạy trực tiếp dưới máy local của mình mà không cần viết lại một dòng code test nào. Công việc giữa các phòng ban trôi chảy, chạy song song và bổ trợ nhau cực kỳ tốt.
+
+Tuyệt chiêu ở đây là: Automa cho phép xuất kịch bản test dưới dạng file `*.json`. Tôi chỉ cần đưa file `*.json` mẫu của một luồng test cũ cho AI Agent và bảo: *"Hãy sửa đổi file `*.json` kịch bản Automa này để nó tự động điền form reset mật khẩu mới trên màn hình localhost:3000."*
+
+AI sinh ra file `*.json` mới, tôi chỉ việc import vào Automa trên Chrome và nhấn Run. Trình duyệt tự động mở ra, click chuột, điền form, kiểm tra kết quả trong chớp mắt. Tôi chỉ ngồi uống nước và xem thành quả.
+
+---
+
+### 5:00 PM — OneDrive (Cloud Sync) - Âm thầm đồng bộ và lưu trữ bối cảnh
+
+Cuối ngày, tôi tổng hợp lại tài liệu thiết kế hệ thống và checklist công việc. Mỗi khi tôi lưu một tài liệu thiết kế dưới dạng markdown, AI Agent tự động kích hoạt luật đồng bộ, sao chép file đó vào thư mục **Obsidian Vault** nằm trong **OneDrive**.
+
+**Tại sao tôi chọn OneDrive?** Đơn giản vì nó cực kỳ tiện dụng, đồng bộ nhanh, tích hợp sẵn trên hệ điều hành và hoàn toàn **miễn phí** (hoặc đi kèm gói Office 365 có sẵn của đại đa số dân văn phòng). Dữ liệu vừa an toàn vừa không tốn thêm một đồng chi phí bản quyền nào.
+
+Đồng thời, thư mục lưu trữ dữ liệu local của **MemPalace** cũng được cấu hình nằm gọn trong thư mục OneDrive này. Hệ thống OneDrive âm thầm đồng bộ toàn bộ tài liệu thiết kế lẫn "kho ký ức" của AI lên đám mây. Tối về, tôi chỉ cần mở iPad hoặc máy tính cá nhân ở nhà lên, mở Obsidian là đã thấy toàn bộ tiến độ công việc, sơ đồ Canvas, Graph View được cập nhật mới nhất, và khi mở IDE ở nhà lên, trợ lý AI cũng tự động thừa hưởng toàn bộ ký ức làm việc của buổi chiều mà không bị đứt gãy mạch suy nghĩ.
+
+---
+
+## 💡 Lời Kết
+
+Việc kết hợp nhiều công cụ nghe có vẻ phức tạp lúc ban đầu, nhưng khi đã cấu hình xong xuôi, bạn sẽ sở hữu một "trợ lý ảo" thực sự hiểu dự án của bạn từ Database, Codebase cho đến quy trình kiểm thử và tài liệu hóa.
+
+*   **Lời khuyên:** Đừng cố gắng setup tất cả mọi thứ cùng một lúc. Hãy bắt đầu từ việc mớm context chuẩn qua IDE, sau đó tích hợp dần MemPalace để giữ bộ nhớ cho AI, rồi đến Bruno để quản lý API test bằng file text. Tự động hóa từng chút một, bạn sẽ thấy hiệu suất làm việc của mình tăng lên một cách đáng kinh ngạc!
+
+Chúc anh em thiết lập thành công siêu hệ thống của riêng mình và có những giờ phút lập trình thật nhàn nhã!
