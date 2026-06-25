@@ -6,7 +6,7 @@ Với tôi, nỗi ám ảnh lớn nhất mỗi ngày đi làm không phải là 
 
 Tệ hơn nữa là khi tôi phải gánh vác và điều hành cùng lúc nhiều dự án khác nhau. Việc liên tục chuyển đổi bối cảnh (context switching) mà không có một phương pháp sắp xếp bộ nhớ khoa học rất dễ khiến đầu óc tôi rơi vào trạng thái quá tải (overhead) thông tin và kiệt quệ.
 
-Chính vì vậy, là một người lười biếng một cách có tính toán, tôi đã quyết định đầu tư một lần để dựng lên một **hệ sinh thái tự động hóa** xoay quanh quy trình làm việc hàng ngày của mình. Hệ thống này kết hợp các công cụ: **AI Agent**, **[MemPalace](https://github.com/mempalace/mempalace) (Bộ nhớ dài hạn mã nguồn mở - Long-term Memory)**, **[Obsidian](https://obsidian.md/) (Quản lý tri thức dạng Graph local-first - Documentation / Knowledge Base)**, **OneDrive (Đồng bộ đám mây - Cloud Sync)**, **[Bruno](https://github.com/usebruno/bruno) (API Client mã nguồn mở thay thế Postman - API Testing)**, **MCP Server (Giao tiếp hệ thống - Model Context Protocol)** và **Automa (Tự động hóa trình duyệt - E2E Testing)**.
+Chính vì vậy, là một người lười biếng một cách có tính toán, tôi đã quyết định đầu tư một lần để dựng lên một **hệ sinh thái tự động hóa** xoay quanh quy trình làm việc hàng ngày của mình. Hệ thống này kết hợp các công cụ: **AI Agent**, **[MemPalace](https://github.com/mempalace/mempalace) (Bộ nhớ dài hạn mã nguồn mở - Long-term Memory)**, **[Obsidian](https://obsidian.md/) (Quản lý tri thức dạng Graph local-first - Documentation / Knowledge Base)**, **OneDrive (Đồng bộ đám mây - Cloud Sync)**, **[Bruno](https://github.com/usebruno/bruno) (API Client mã nguồn mở thay thế Postman - API Testing)**, **MCP Server (Giao tiếp hệ thống - Model Context Protocol)**, **Automa (Tự động hóa trình duyệt - E2E Testing)** và **[Supabase](https://supabase.com/) (Dịch vụ Backend-as-a-Service mã nguồn mở cung cấp Database & Storage miễn phí)**.
 
 Dưới đây là câu chuyện thực tế về cách các mảnh ghép này phối hợp nhịp nhàng với nhau trong một ngày làm việc của tôi để biến mọi thứ trở nên tự động và nhàn nhã.
 
@@ -20,6 +20,7 @@ Dưới đây là câu chuyện thực tế về cách các mảnh ghép này ph
 | **[Obsidian](https://obsidian.md/) (Documentation)** | ❌ (Free) | ❌ | ✅ | ❌ | Quản lý tri thức local-first cực mạnh với Canvas và Graph View (hoặc có thể dùng **[Logseq](https://logseq.com/)** làm giải pháp mã nguồn mở thay thế). |
 | **[Bruno](https://github.com/usebruno/bruno) (API Testing)** | ✅ | ❌ | ✅ | ✅ | Lưu request dạng file văn bản thuần. Hỗ trợ Environment Variables & scripts để test tự động API theo context/roles của user qua scheduler. |
 | **[Automa](https://automa.site/) (E2E Testing)** | ✅ | ❌ | ✅ | ✅ | Tự động hóa trình duyệt qua giao diện trực quan, hỗ trợ export kịch bản JSON và chạy scheduler kiểm thử định kỳ. |
+| **[Supabase](https://supabase.com/) (Database & Storage)** | ✅ | ✅ | ✅ | ❌ | Lưu trữ tập trung các kịch bản workflow JSON của Automa và cung cấp dịch vụ Storage **miễn phí** để lưu trữ hình ảnh test report của các lần chạy automation. |
 | **MCP Servers (Integration)** | ✅ | ✅ | ❌ | ❌ | Cánh tay nối dài giúp trợ lý AI tương tác trực tiếp với Database, Figma, File System... |
 
 *(Gợi ý: Nếu bạn muốn một hệ thống tài liệu hoàn toàn mã nguồn mở để thay thế cho Obsidian, [Logseq](https://logseq.com/) là một sự lựa chọn thay thế tuyệt vời với khả năng lưu trữ file markdown local-first và biểu đồ Graph View tương đương).*
@@ -49,6 +50,7 @@ graph TD
     subgraph Execution & Test
         E -->|Bruno CLI| I[API Integration Testing]
         E -->|Automa Chrome Extension| J[E2E UI/UX Testing]
+        J -->|Lưu JSON & Upload ảnh Test Report| K[(Supabase Cloud Database & Storage)]
     end
 ```
 
@@ -109,17 +111,17 @@ Tôi bảo AI Agent: *"Em vào thư mục `api-tests/`, đọc các file `.bru` 
 
 AI viết file trong vòng 1 giây. Tôi chỉ cần chạy lệnh `bru run` ngay trên terminal để test tự động toàn bộ luồng API. Nhanh, gọn, nhẹ và hoàn toàn nằm trong tầm kiểm soát của Git.
 
----
-
-### 3:00 PM — Automa (E2E Testing) - Chạy Automation Test UI/UX thần tốc
+### 3:00 PM — Automa (E2E Testing) & Supabase (Storage & DB) - Chạy Automation Test và Lưu Trữ Báo Cáo Miễn Phí
 
 API đã chạy ngon, Frontend đã dựng xong, giờ đến phần kiểm thử luồng đăng ký -> đăng nhập -> reset mật khẩu trên trình duyệt. Thường thì chúng ta sẽ phải viết code Cypress hoặc Playwright khá tốn thời gian. Nhưng tôi chọn **Automa** - một Chrome Extension cho phép kéo thả để tạo kịch bản tự động hóa cực kỳ trực quan.
 
-**Giải pháp độc lập cho các phòng ban:** Vì Automa là một extension độc lập chạy trên trình duyệt, các nhóm test (QC) có thể tự thiết kế và xuất (export) kịch bản workflow dưới dạng các file `*.json` rồi chia sẻ lên host chung của dự án. Dev có thể lấy ngay file `*.json` này về import và chạy trực tiếp dưới máy local của mình mà không cần viết lại một dòng code test nào. Công việc giữa các phòng ban trôi chảy, chạy song song và bổ trợ nhau cực kỳ tốt.
+**Giải pháp độc lập và đồng bộ đám mây:** Vì Automa là một extension độc lập chạy trên trình duyệt, các nhóm test (QC) có thể tự thiết kế và xuất (export) kịch bản workflow dưới dạng các file `*.json`. Nhưng thay vì lưu trữ thủ công rời rạc, tôi tích hợp thêm **Supabase** vào làm máy chủ lưu trữ tập trung. 
+*   Các file cấu hình `*.json` được lưu tập trung vào Supabase Database để AI Agent hoặc bất kỳ ai trong team đều có thể fetch về dùng ngay mà không bị block.
+*   Khi Automa chạy test tự động, nó sẽ chụp ảnh màn hình các bước (Test Report Screenshots). Toàn bộ các ảnh này được tự động tải lên **Supabase Storage** (với gói **Miễn Phí** cực kỳ hào phóng lên tới 1GB lưu trữ). Mọi kết quả kiểm thử được công khai hóa bằng đường link CDN để cả Dev lẫn QC đều kiểm tra được ngay lập tức. 
 
 Tuyệt chiêu ở đây là: Automa cho phép xuất kịch bản test dưới dạng file `*.json`. Tôi chỉ cần đưa file `*.json` mẫu của một luồng test cũ cho AI Agent và bảo: *"Hãy sửa đổi file `*.json` kịch bản Automa này để nó tự động điền form reset mật khẩu mới trên màn hình localhost:3000."*
 
-AI sinh ra file `*.json` mới, tôi chỉ việc import vào Automa trên Chrome và nhấn Run. Trình duyệt tự động mở ra, click chuột, điền form, kiểm tra kết quả trong chớp mắt. Tôi chỉ ngồi uống nước và xem thành quả.
+AI sinh ra file `*.json` mới, tôi chỉ việc import vào Automa trên Chrome và nhấn Run. Trình duyệt tự động mở ra, click chuột, điền form, chụp màn hình lưu kết quả, đẩy thẳng ảnh lên Supabase Storage và hoàn tất báo cáo kiểm thử trong chớp mắt. Tôi chỉ ngồi uống nước và xem thành quả.
 
 ---
 
