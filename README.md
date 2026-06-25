@@ -1,8 +1,8 @@
 # Một Ngày Trong Đời Của Developer "Lười": Cách Tôi Dựng Siêu Hệ Thống Tự Động Hóa Với AI Agent, MemPalace & Obsidian
 
-*Chia sẻ thực tế từ một lập trình viên thích tối ưu hóa quy trình làm việc.*
+*Trải nghiệm thực tế từ những ngày tháng trăn trở để tối ưu hóa từng phút giây làm việc của tôi.*
 
-Đi làm lập trình viên, sợ nhất không phải là gặp task khó, mà sợ nhất là những công việc lặp đi lặp lại vô nghĩa: ngồi nhớ xem hôm qua mình đang làm dở file nào, gõ đi gõ lại mấy câu lệnh terminal dài dằng dặc, mở Postman lên click click test API thủ công, hay cặm cụi click chuột giả lập trên trình duyệt để kiểm thử giao diện.
+Với tôi, nỗi ám ảnh lớn nhất mỗi ngày đi làm không phải là gặp bài toán khó, mà là những công việc lặp đi lặp lại vô nghĩa: cố gắng lục lọi trí nhớ xem hôm qua mình đang làm dở file nào, gõ đi gõ lại mấy câu lệnh terminal dài dằng dặc, mở Postman lên click click test API thủ công, hay cặm cụi click chuột giả lập trên trình duyệt để kiểm thử giao diện.
 
 Là một người lười biếng một cách có tính toán, tôi đã quyết định đầu tư một lần để dựng lên một **hệ sinh thái tự động hóa** xoay quanh quy trình làm việc hàng ngày của mình. Hệ thống này kết hợp các công cụ: **AI Agent**, **[MemPalace](https://github.com/mempalace/mempalace) (Bộ nhớ dài hạn mã nguồn mở - Long-term Memory)**, **[Obsidian](https://obsidian.md/) (Quản lý tri thức dạng Graph local-first - Documentation / Knowledge Base)**, **OneDrive (Đồng bộ đám mây - Cloud Sync)**, **[Bruno](https://github.com/usebruno/bruno) (API Client mã nguồn mở thay thế Postman - API Testing)**, **MCP Server (Giao tiếp hệ thống - Model Context Protocol)** và **Automa (Tự động hóa trình duyệt - E2E Testing)**.
 
@@ -137,4 +137,4 @@ Việc kết hợp nhiều công cụ nghe có vẻ phức tạp lúc ban đầu
 
 *   **Lời khuyên:** Đừng cố gắng setup tất cả mọi thứ cùng một lúc. Hãy bắt đầu từ việc mớm context chuẩn qua IDE, sau đó tích hợp dần MemPalace để giữ bộ nhớ cho AI, rồi đến Bruno để quản lý API test bằng file text. Tự động hóa từng chút một, bạn sẽ thấy hiệu suất làm việc của mình tăng lên một cách đáng kinh ngạc!
 
-Chúc anh em thiết lập thành công siêu hệ thống của riêng mình và có những giờ phút lập trình thật nhàn nhã!
+Hy vọng những trải nghiệm thực tế này sẽ giúp bạn tìm ra giải pháp tối ưu cho chính mình để có được những giờ làm việc hiệu quả và nhàn nhã hơn!
